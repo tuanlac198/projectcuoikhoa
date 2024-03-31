@@ -1,0 +1,286 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Game Bầu Cua</title>
+        <style>
+            .content-wrapper {
+                margin: 0 auto;
+                max-width: 1280px;
+            }
+            h1 {
+                margin-bottom: 40px;
+                margin-top: 20px;
+                text-align: center;
+                font-size: 48px;
+            }
+            .quay-box {
+                text-align: right;
+                margin-top: 20px;
+                margin-bottom: 20px;
+                padding-right: 20px;
+            }
+            #quay-button, #reset-button {
+                color: #000;
+                background: #39e156;
+                border: none;
+                padding: 15px 20px;
+                cursor: pointer;
+                border-radius: 5px;
+                font-weight: 700;
+            }
+            #quay-button:disabled, #reset-button:disabled {
+                opacity: 0.6;
+            }
+            .result-box {
+                text-align: center;
+                margin-top: 20px;
+                display: flex;
+                justify-content: center;
+            }
+            .dat-cuoc-box {
+                text-align: center;
+                margin-top: 20px;
+            }
+            #text-result {
+                text-align: center;
+                font-weight: 700;
+                margin-top: 15px;
+                font-size: 20px;
+                height: 23px;
+            }
+            .result-item {
+                border: 1px solid #a18686;
+                margin: 15px;
+                cursor: pointer;
+                width: 180px;
+                height: 180px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 10px;
+            }
+            .result-item img {
+                max-width: 140px;
+            }
+            .dat-cuoc-box {
+                display: flex;
+                justify-content: center;
+            }
+            .img-cuoc {
+                max-width: 150px;
+                height: auto;
+            }
+            .box-cuoc {
+                border: 1px solid #a18686;
+                margin: 20px;
+                width: 200px;
+                height: 200px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all .2s ease-in-out;
+                border-radius: 10px;
+                position: relative;
+            }
+            .box-cuoc:hover {
+                transform: scale(1.1);
+            }
+            .qty {
+                position: absolute;
+                top: 10px;
+                left: 15px;
+                font-weight: 700;
+            }
+            .reset-box {
+                display: flex;
+                justify-content: space-between;
+                padding-right: 20px;
+                padding-left: 20px;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+            .luu-y {
+                font-size: 20px;
+                font-weight: 700;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="content-wrapper">
+            <h1>Game Bầu Cua</h1>
+            <div class="result-box">
+                <div class="result-item" id="result-1">
+                    <img id="img-result-1" src="images/bau.png" alt="result-1">
+                </div>
+                <div class="result-item" id="result-2">
+                    <img id="img-result-2" src="images/bau.png" alt="result-2">
+                </div>
+                <div class="result-item" id="result-3">
+                    <img id="img-result-3" src="images/bau.png" alt="result-3">
+                </div>
+            </div>
+            <div id="text-result"></div>
+            <div class="quay-box">
+                <button type="button" id="quay-button" >Quay</button>
+            </div>
+            <div class="dat-cuoc-box">
+                <div class="box-cuoc" id="bau">
+                    <img class="img-cuoc" src="images/bau.png" >
+                    <span class="qty">0</span>
+                </div>
+                <div class="box-cuoc" id="cua">
+                    <img class="img-cuoc" src="images/cua.png" >
+                    <span class="qty">0</span>
+                </div>
+                <div class="box-cuoc" id="tom">
+                    <img class="img-cuoc" src="images/tom.png" >
+                    <span class="qty">0</span>
+                </div>
+                <div class="box-cuoc" id="ca">
+                    <img class="img-cuoc" src="images/ca.png" >
+                    <span class="qty">0</span>
+                </div>
+                <div class="box-cuoc" id="huou">
+                    <img class="img-cuoc" src="images/huou.png" >
+                    <span class="qty">0</span>
+                </div>
+                <div class="box-cuoc" id="ga">
+                    <img class="img-cuoc" src="images/ga.png"  >
+                    <span class="qty">0</span>
+                </div>
+            </div>
+            <div class="reset-box">
+                <div class="luu-y">
+                    <span>Lưu ý:</span><br>
+                    <span>- Số lần đặt ở một 'Hình' sẽ là số lần xuất hiện của các 'Hình' trên 'Kết quả'</span><br>
+                    <span>- Tổng số điểm đặt trong một lần tối đa là 3</span>
+                </div>
+                <div>
+                    <button type="button" id="reset-button" onclick="reset()">Đặt lại</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            
+            var hinhCuoc = ['bau','cua','tom','ca','huou','ga']; // danh sách hình cược
+            var label = {'bau': 'Bầu', 'cua': 'Cua', 'tom': 'Tôm','ca': 'Cá', 'huou': 'Hươu', 'ga': 'Gà'}; // tên tiếng Việt của danh sách hình cược (dùng để hiển thị kết quả)
+            var qty = {'bau': 0,'cua': 0, 'tom': 0, 'ca': 0, 'huou': 0, 'ga': 0}; // số lượng đặt cược của từng hình
+            var result = ['bau','bau','bau']; // kết quả quay mặc định là bau-bau-bau 
+            var enableToBet = 1; // có thể click để đặt cược hay k : mặc định là 1, khi ấn 'Quay' thì về 0
+
+            var elements = document.querySelectorAll('div[class~="box-cuoc"]');
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].addEventListener('click', function(e) {
+                    let sum = 0;
+                    for (var key in qty) {
+                        if (qty.hasOwnProperty(key)) {
+                            sum += qty[key];
+                        }
+                    }
+                    if (sum < 3 && enableToBet) {
+                        qty[this.id]++;
+                    }
+                    for (var key in qty) {
+                        if (qty.hasOwnProperty(key)) {
+                            document.getElementById(key).getElementsByClassName('qty')[0].innerHTML = qty[key];
+                        }
+                    }
+                });
+            }
+
+
+            // reset tất cả số lượng đặt cược về 0  
+            function reset() {
+                for (var key in qty) {
+                    if (qty.hasOwnProperty(key)) {
+                        qty[key] = 0;
+                    }
+                }
+
+                // update html cho từng hình 
+                for (var key in qty) {
+                    if (qty.hasOwnProperty(key)) {
+                        document.getElementById(key).getElementsByClassName('qty')[0].innerHTML = qty[key];
+                    }
+                }
+            }
+
+            document.getElementById('quay-button').addEventListener('click', function(e) {
+
+                // không cho click vào button "Quay", "Đặt lại" và không cho đặt cược
+                document.getElementById("quay-button").disabled = true;
+                document.getElementById("reset-button").disabled = true;
+                enableToBet = 0;
+
+                bet(function() {
+                    var ketqua = 0;
+                    var text = '';
+                    var isBetted = 0; // user đã đặt cược hay chưa
+
+                    // kiểm tra xem user đã đặt cược hay chưa
+                    for (var key in qty) {
+                        if (qty.hasOwnProperty(key)) {
+                            isBetted += qty[key];
+                        }
+                    }
+
+                    // kiểm tra xem đặt có trúng hay k 
+                    for (let i = 0; i < result.length; i++) {
+                        ketqua += qty[result[i]];
+                    }
+
+
+                    // kết quả hiển thị đúng sai
+                    if (ketqua) {
+                        text += "Bạn đã đoán đúng với kết quả: ";
+                        for (var key in qty) {
+                            if (qty.hasOwnProperty(key)) {
+                                if (qty[key]) {
+                                    text += label[key] + ' ' + qty[key] + ' ';
+                                }
+                            }
+                        }
+                    } else if (isBetted){
+                        text += "Bạn đã đoán sai với kết quả: ";
+                        for (var key in qty) {
+                            if (qty.hasOwnProperty(key)) {
+                                if (qty[key]) {
+                                    text += label[key] + ' ' + qty[key] + ' ';
+                                }
+                            }
+                        }
+                    }
+                    document.getElementById("text-result").innerHTML = text; // hiển thị kết quả lên màn hình 
+
+                    // enable button "Quay", "Đặt lại" và cho đặt cược
+                    document.getElementById("quay-button").disabled = false;
+                    document.getElementById("reset-button").disabled = false;
+                    enableToBet = 1;
+                });
+            })
+            
+            function bet(callback) {
+                var resultCount1 = 0;
+                var intervalID1 = setInterval(function () {
+                    let randomElement1 = hinhCuoc[Math.floor(Math.random() * hinhCuoc.length)];
+                    document.getElementById('img-result-1').src = "images/" + randomElement1 +".png";
+
+                    let randomElement2 = hinhCuoc[Math.floor(Math.random() * hinhCuoc.length)];
+                    document.getElementById('img-result-2').src = "images/" + randomElement2 +".png";
+
+                    let randomElement3 = hinhCuoc[Math.floor(Math.random() * hinhCuoc.length)];
+                    document.getElementById('img-result-3').src = "images/" + randomElement3 +".png";
+
+                    if (++resultCount1 >= 10) {
+                        result[0] = randomElement1;
+                        result[1] = randomElement2;
+                        result[2] = randomElement3;
+                        window.clearInterval(intervalID1);
+                        callback();
+                    }
+                }, 100);
+            }
+        </script>
+    </body>
+</html>
